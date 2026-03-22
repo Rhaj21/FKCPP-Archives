@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FKCPP Archives | Shop All</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="style/shop-all.css">
+    <style>
+        
+    </style>
+</head>
+<body>
+
+    <div class="loader-overlay">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <nav id="mainNav">
+        <div class="nav-container">
+            
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <a href="index.html#home" class="logo">FKCPP<span>Archives</span></a>
+            
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html" class="nav-item">Home</a></li>
+                <li><a href="#shop-all" class="nav-item active">Shop</a></li>
+                <li><a href="index.html#brands" class="nav-item">Brands</a></li>
+                <li><a href="index.html#guide" class="nav-item">Style Guide</a></li>
+                <li><a href="index.html#about" class="nav-item">About</a></li>
+                
+                <li class="mobile-only-join">
+                    <a href="#join-section" class="mobile-join-btn">Join the Hunt</a>
+                </li>
+                
+                <li class="theme-switch-wrapper mobile-theme" id="mobileThemeWrap">
+                    <span class="theme-switch-text">Dark Mode</span>
+                    <label class="theme-switch" for="mobileCheckbox">
+                        <input type="checkbox" id="mobileCheckbox" />
+                        <div class="slider round"></div>
+                    </label>
+                </li>
+            </ul>
+
+            <div class="nav-controls">
+                <a href="#join-section" class="btn-header desktop-only">Join</a>
+                
+                <div class="theme-switch-wrapper desktop-theme desktop-only">
+                    <span class="theme-switch-text">Dark Mode</span>
+                    <label class="theme-switch" for="desktopCheckbox">
+                        <input type="checkbox" id="desktopCheckbox" />
+                        <div class="slider round"></div>
+                    </label>
+                </div>
+
+                <div class="search-wrapper desktop-search desktop-only" id="desktopSearchWrapper">
+                    <div class="search-bar">
+                        <svg width="16" height="16" fill="var(--text-muted)" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+                        <input type="text" id="desktopSearchInput" placeholder="Search archives..." autocomplete="off">
+                        <div class="desktop-search-clear" id="clearDesktopSearch">
+                            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                        </div>
+                    </div>
+                    <div class="desktop-search-results" id="desktopSearchResults"></div>
+                </div>
+
+                <div class="mobile-search-icon mobile-only" id="openMobileSearch">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+                </div>
+
+                <div class="cart-icon-wrapper" onclick="toggleCart()" id="cartIconWrapper">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span class="cart-badge cart-badge-text">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="cart-overlay" id="cartOverlay">
+        <div class="cart-drawer">
+            <div class="cart-header">
+                <h3>Your Bag</h3>
+                <button class="close-cart" onclick="toggleCart()">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItemsContainer"></div>
+            <div class="cart-footer">
+                <div class="cart-subtotal">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotalValue">₱0</span>
+                </div>
+                <button class="btn-checkout">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-search-overlay" id="mobileSearchOverlay">
+        <div class="mobile-search-header">
+            <div class="mobile-search-back" id="closeMobileSearch">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </div>
+            <input type="text" id="mobileSearchInput" placeholder="Search archives..." autocomplete="off">
+            <div class="mobile-search-clear" id="clearMobileSearch">
+                <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </div>
+        </div>
+        <div class="mobile-search-results" id="mobileSearchResults"></div>
+    </div>
+
+    <section id="shop-all" class="shop-all-section reveal">
+        <div class="container">
+            <h2>The Archives</h2>
+            
+            <div class="filter-container" id="filterContainer">
+                <button class="filter-btn active" data-filter="All">All</button>
+                <button class="filter-btn" data-filter="Shoes">Shoes</button>
+                <button class="filter-btn" data-filter="Shirts">Shirts</button>
+                <button class="filter-btn" data-filter="Pants">Pants</button>
+                <button class="filter-btn" data-filter="Jackets">Jackets</button>
+                <button class="filter-btn" data-filter="Accessories">Accessories</button>
+            </div>
+
+            <div class="grid-container" id="productGrid">
+                </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#shop-all" class="logo" style="color:white; letter-spacing:-1px;">FKCPP<span>Archives</span></a>
+                    <p style="margin-top: 1.5rem; color: #888; font-size:0.95rem; line-height: 1.6;">Curating the best secondhand gems from the bales straight to your closet.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="#shop-all">Shop</a></li>
+                        <li><a href="index.html#brands">Brands</a></li>
+                        <li><a href="index.html#guide">Style Guide</a></li>
+                        <li><a href="index.html#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Social</h4>
+                    <ul>
+                        <li><a href="https://www.instagram.com/" target="_blank">Instagram</a></li>
+                        <li><a href="https://www.tiktok.com/" target="_blank">TikTok</a></li>
+                        <li><a href="https://www.facebook.com/" target="_blank">Facebook</a></li>
+                        <li><a href="https://www.youtube.com/" target="_blank">Youtube</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col newsletter" id="join-section">
+                    <h4>Join the Hunt</h4>
+                    <p style="color: #888; margin-bottom: 1.5rem; font-size: 0.95rem;">Get notified when a new batch of grails drops.</p>
+                    <input type="email" placeholder="Email Address">
+                    <button>Subscribe</button>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 FKCPP Archives. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="script/data.js"></script>
+    <script src="script/main.js"></script>
+    <script src="script/shop-all.js"></script>
+</body>
+</html>

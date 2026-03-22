@@ -1,0 +1,26 @@
+/* =========================================================
+   shop-all.css - Full Store Archive Page Styles
+   ========================================================= */
+
+/* Layout Override */
+.shop-all-section { padding-top: 150px; min-height: 80vh; }
+
+/* Filter Container & Buttons */
+.filter-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 3rem; }
+.filter-btn { background: transparent; border: 1px solid var(--border); color: var(--text-main); padding: 0.6rem 1.5rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: var(--transition); }
+
+/* Click Feedback */
+.filter-btn:active { transform: scale(0.95) !important; transition: transform 0.1s ease; }
+
+/* Hover & Active States */
+@media (hover: hover) and (pointer: fine) {
+    .filter-btn:hover, .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+}
+
+/* For non-hover devices (touch), make sure the active class still styles properly */
+.filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .shop-all-section { padding-top: 100px; }
+}
