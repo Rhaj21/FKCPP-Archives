@@ -6,8 +6,9 @@
 window.addEventListener('load', function() {
     document.body.classList.add('loaded');
     
-    // NEW: Restore scroll position if returning from a single product page
-    if (document.referrer.includes('post.html')) {
+    // FIX: Restore scroll position ONLY if returning from a single product page 
+    // AND there is no hash (#) in the URL (like #about or #brands).
+    if (document.referrer.includes('post.html') && !window.location.hash) {
         const savedPos = sessionStorage.getItem('savedScrollPos');
         if (savedPos) {
             // Slight delay ensures dynamically rendered grids are fully painted first
@@ -41,7 +42,11 @@ function updateScrollLock() {
 let cart = JSON.parse(localStorage.getItem('fkcpp_cart')) || [];
 
 function saveCart() { localStorage.setItem('fkcpp_cart', JSON.stringify(cart)); }
-function parsePrice(priceStr) { return Number(priceStr.replace(/[^0-9.-]+/g, "")); }
+
+// FIX: Ensure priceStr is treated as a string to prevent .replace() errors
+function parsePrice(priceStr) { 
+    return Number(String(priceStr).replace(/[^0-9.-]+/g, "")); 
+}
 function formatPrice(num) { return "₱" + num.toLocaleString('en-US'); }
 
 function toggleCart() {
@@ -54,6 +59,8 @@ function toggleCart() {
 
 function flyToCartAnim(event, productImg) {
     const cartIcon = document.getElementById('cartIconWrapper');
+    if (!cartIcon) return; // FIX: Prevent error if cart icon isn't on the page
+
     let imgElement = null;
 
     if (event && event.target && event.target.closest('.card')) {
@@ -74,7 +81,7 @@ function flyToCartAnim(event, productImg) {
     clone.style.top = `${startRect.top}px`; clone.style.left = `${startRect.left}px`;
     document.body.appendChild(clone);
 
-    void clone.offsetWidth; 
+    void clone.offsetWidth; // Trigger reflow
 
     clone.style.top = `${endRect.top}px`; clone.style.left = `${endRect.left}px`;
     clone.style.width = '20px'; clone.style.height = '20px';
@@ -88,10 +95,19 @@ function flyToCartAnim(event, productImg) {
 }
 
 function addToCart(event, productId) {
-    const product = productData.find(p => p.id === productId);
-    if (!product) return;
+    if (typeof productData === 'undefined') {
+        console.error("productData is not defined. Make sure your products script is loaded before main.js.");
+        return;
+    }
+
+    // FIX: Use String() to ensure IDs match even if one is a number and one is a string
+    const product = productData.find(p => String(p.id) === String(productId));
+    if (!product) {
+        console.error("Product not found:", productId);
+        return;
+    }
     
-    const existingItem = cart.find(item => item.id === productId);
+    const existingItem = cart.find(item => String(item.id) === String(productId));
     if (existingItem) {
         existingItem.quantity += 1; 
     } else {
@@ -104,17 +120,21 @@ function addToCart(event, productId) {
 }
 
 function updateQuantity(productId, delta) {
-    const item = cart.find(i => i.id === productId);
+    // FIX: String matching for IDs
+    const item = cart.find(i => String(i.id) === String(productId));
     if (item) {
         item.quantity += delta;
-        if (item.quantity <= 0) cart = cart.filter(i => i.id !== productId);
+        if (item.quantity <= 0) {
+            cart = cart.filter(i => String(i.id) !== String(productId));
+        }
         saveCart(); 
         updateCartUI();
     }
 }
 
 function removeFromCart(productId) {
-    cart = cart.filter(i => i.id !== productId);
+    // FIX: String matching for IDs
+    cart = cart.filter(i => String(i.id) !== String(productId));
     saveCart(); 
     updateCartUI();
 }
@@ -124,13 +144,14 @@ function updateCartUI() {
     const totalEl = document.getElementById('cartSubtotalValue');
     const badges = document.querySelectorAll('.cart-badge-text');
     
-    if(!container || !totalEl) return;
+    if(!container || !totalEl) return; 
 
     let totalItems = 0; let subtotal = 0;
 
     if (cart.length === 0) {
         container.innerHTML = `<div class="empty-cart-msg">Your bag is currently empty.</div>`;
     } else {
+        // FIX: Added quotes around '${item.id}' in onclick functions to prevent variable errors
         container.innerHTML = cart.map(item => {
             const itemPrice = parsePrice(item.price);
             subtotal += itemPrice * item.quantity; totalItems += item.quantity;
@@ -142,11 +163,11 @@ function updateCartUI() {
                         <div class="cart-item-price">${item.price}</div>
                         <div class="cart-item-actions">
                             <div class="qty-controls">
-                                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
                                 <span class="qty-val">${item.quantity}</span>
-                                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                                <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
                             </div>
-                            <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button>
+                            <button class="remove-btn" onclick="removeFromCart('${item.id}')">Remove</button>
                         </div>
                     </div>
                 </div>
@@ -181,7 +202,6 @@ function generateResultsHTML(results, query) {
     const limit = 5;
     const topResults = results.slice(0, limit);
 
-    // NEW: Added save position logic to search items
     let html = topResults.map(item => `
         <div class="search-item" onclick="sessionStorage.setItem('savedScrollPos', window.scrollY); window.location.href='post.html?id=${item.id}'">
             <img src="${item.img}" alt="${item.name}">
@@ -204,6 +224,8 @@ function generateResultsHTML(results, query) {
 }
 
 function handleSearch(query, container, isDesktop) {
+    if (typeof productData === 'undefined') return;
+
     if (query === "") {
         container.innerHTML = "";
         if (isDesktop) container.classList.remove('active');
@@ -225,7 +247,7 @@ if(desktopInput) {
         handleSearch(query, desktopResults, true);
     });
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.search-wrapper')) desktopResults.classList.remove('active');
+        if (!e.target.closest('.search-wrapper') && desktopResults) desktopResults.classList.remove('active');
     });
     clearDesktopBtn.addEventListener('click', () => {
         desktopInput.value = ""; desktopResults.innerHTML = "";
@@ -318,4 +340,5 @@ function toggleTheme(e) {
 if(desktopThemeCheck) desktopThemeCheck.addEventListener('change', toggleTheme);
 if(mobileThemeCheck) mobileThemeCheck.addEventListener('change', toggleTheme);
 
+// Initialize Cart UI on load
 updateCartUI();

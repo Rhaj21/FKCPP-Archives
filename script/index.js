@@ -59,8 +59,8 @@ function handleScrollSpy() {
 window.addEventListener('scroll', handleScrollSpy);
 
 window.addEventListener('load', () => {
-    // NEW: Only trigger smooth hash scroll if we are NOT restoring position from post.html
-    if (window.location.hash && !document.referrer.includes('post.html')) {
+    // FIX: Always trigger smooth hash scroll if a hash exists, no matter the referrer page.
+    if (window.location.hash) {
         const target = document.querySelector(window.location.hash);
         if (target) {
             setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 100);
